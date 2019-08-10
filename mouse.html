@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        div {
+            height : 100px;
+            width : 100px;
+            background-color : steelblue;
+            margin : 5px;
+        }
+    </style>
+    <script src = "d3.js"></script>
+    <title>mouse</title>
+</head>
+<body>
+<div></div>
+<script>
+    d3.selectAll("div")
+    .on("mouseover",function(){
+        d3.select(this)
+            .style("background-color","orange");
+        console.log(d3.event); // get current event info
+        console.log(d3.mouse(this)); // get x & y co-ordinates
+    })
+    .on("mouseout",function(){
+        d3.select(this)
+            .style("background-color","steelblue"); // the background color restitutes
+    })
+</script>
+</body>
+</html>

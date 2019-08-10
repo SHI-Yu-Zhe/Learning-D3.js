@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #container {
+            height: 100px;
+            width: 100px;
+            background-color: black;
+        }
+    </style>
+    <script src = "d3.js"></script>
+    <title>animation</title>
+</head>
+<body>
+<div id="container"></div>
+<script>
+    d3.select("#container")
+    .transition()
+    .duration(1000)
+    .style("background-color","red");
+</script>
+</body>
+<body>
+    <script>
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width",500)
+            .attr("height",500);
+        var bar1 = svg.append("rect")
+            .attr("fill","blue")
+            .attr("y",20)
+            .attr("x",100)
+            .attr("width",10)
+            .attr("height",20);
+        var bar2 = svg.append("rect")
+            .attr("fill","blue")
+            .attr("y",20)
+            .attr("x",120)
+            .attr("width",10)
+            .attr("height",20); // define two bars
+        update();
+        function update(){
+            bar1.transition()
+                .ease(d3.easeLinear)
+                .duration(2000)
+                .attr("height",100);
+            bar2.transition()
+                .ease(d3.easeLinear)
+                .duration(2000)
+                .delay(2000)
+                .attr("height",100);
+        } // define the transition
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "d3.js"></script>
+    <title>dataFunction</title>
+</head>
+<body>
+    <p></p>
+    <p></p>
+    <p></p>
+    <script>
+        var data = [1,2,3];
+        var paragraph = d3.select("body")
+            .selectAll("p")
+            .data(data)
+            .text((d,i)=>{
+                console.log("d:"+d);
+                console.log("i:"+i);
+                console.log("this:"+this);
+                return d;
+            });
+    </script>
+</body>
+<body>
+    <p>Brahms: Konzert fuer klavier und ochester Nr.2 </p>
+    <p>Schumann: Waldszene, Op.82</p>
+    <script>
+        import * as d3 from "./d3";
+
+        d3.selectAll("p").style("color",function(d,i){
+            let text = this.innerText;
+            if(text.indexOf("Brahms")>=0)  return "red";
+            else if(text.indexOf("Schumann")>=0)   return "yellow";
+        });
+    </script>
+</body>
+</html>

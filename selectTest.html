@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "d3.js"></script>
+    <title>selectTest</title>
+</head>
+<body>
+    <p id="p1" class="cc">First Paragraph</p>
+    <p id="p2">Second Paragraph</p>
+    <p id="p3" class="cc">Third Paragraph</p>
+    <script>
+        d3.select("p").style("color","blue");
+        d3.select("#p2").style("color","green");
+        d3.selectAll(".cc").style("background-color","red");
+    </script>
+</body>
+<body>
+    <table>
+        <tr>
+            <td>
+                One
+            </td>
+            <td>
+                Two
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Three
+            </td>
+            <td>
+                Four
+            </td>
+        </tr>
+    </table>
+    <script>
+        d3.select("tr").selectAll("td").style("background-color","yellow");
+    </script>
+</body>
+</html>

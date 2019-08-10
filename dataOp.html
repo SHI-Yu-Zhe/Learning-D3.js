@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "d3.js"></script>
+    <title>dataOp</title>
+</head>
+<body>
+<p></p>
+<p></p>
+<p></p>
+<script>
+    var myData = ["Brahms","Schumann","Mendelssohn"]; // The data must be a vector or an array!
+    var p = d3.select("body")
+    .selectAll("p")
+    .data(myData)
+    .text(function(d,i){
+        return d;
+    })
+</script>
+</body>
+<body>
+    <script>
+        var myData = ["Webber\n","Suppe\n","Piefuke\n"];
+        var p = d3.select("body")
+            .selectAll("span")
+            .data(myData)
+            .enter()
+            .append("span")
+            .text(function (d,i){
+                return d;
+            })
+    </script>
+</body>
+</html>

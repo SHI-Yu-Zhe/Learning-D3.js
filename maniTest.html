@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "d3.js"></script>
+    <title>maniTest</title>
+    <style>
+        .highlight{
+            color:yellowgreen
+        }
+    </style>
+</head>
+<body>
+    <p id="p1" class="cc">First Paragraph</p>
+    <script>
+        d3.select("#p1").html("<span>This was added in HTML</span>");
+        d3.select(".cc").attr("class","highlight");
+        d3.select("p").classed("highlight",false);
+    </script>
+</body>
+<body>
+    <p>Brahms</label><input type="checkbox" /></p>
+    <p>Schumann</label><input type="checkbox" /></p>
+    <script>
+        d3.select("input").property("checked",true);
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "d3.js"></script>
+    <title>svgTest</title>
+</head>
+<body>
+    <script>
+        var width = 500;
+        var height = 500;
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("height",height)
+            .attr("width",width);
+        svg.append("line")
+            .attr("x1",500)
+            .attr("y1",500)
+            .attr("x2",300)
+            .attr("y2",400)
+            .attr("stroke","black");
+    </script>
+</body>
+<body>
+    <script>
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("height",500)
+            .attr("weight",500);
+        svg.append("rect")
+            .attr("x",0)
+            .attr("y",0)
+            .attr("width",100)
+            .attr("height",200);
+    </script>
+</body>
+<body>
+    <script>
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("height",500)
+            .attr("width",500);
+        svg.append("circle")
+            .attr("r",50)
+            .attr("cx",250)
+            .attr("cy",50);
+    </script>
+</body>
+<body>
+    <script>
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width",500)
+            .attr("height",500);
+        svg.append("ellipse")
+            .attr("rx",100)
+            .attr("ry",25)
+            .attr("cx",400)
+            .attr("cy",200)
+            .attr("fill","steelblue"); // change the default filling color
+    </script>
+</body>
+<body>
+    <script>
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("height",500)
+            .attr("width",500);
+        // create a group element to gather ellipse with text
+        var g = svg.append("g")
+            .attr("transform",function(d,i){
+                return "translate(0,0)";
+            })
+        g.append("ellipse")
+            .attr("cx",250)
+            .attr("cy",50)
+            .attr("rx",150)
+            .attr("ry",50)
+            .attr("fill","steelblue")
+            .attr("opacity",0.5)
+            .attr("stroke-width","orange");
+        g.append("text")
+            .attr("x",250)
+            .attr("y",50)
+            .attr("stroke","red")
+            .attr("font-family","sans-serif")
+            .text("This is an ellipse!");
+    </script>
+</body>
+</html>
