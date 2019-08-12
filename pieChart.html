@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "d3.js"></script>
+    <title>pieChart</title>
+</head>
+<body>
+    <svg width="300" height="200"></svg>
+    <script>
+        var data = [2,4,8,10];
+        var svg = d3.select("svg"),
+            width = svg.attr("width"),
+            height = svg.attr("height"),
+            radius = Math.min(width,height)/2; // make full of the space of svg
+        var g = svg.append("g")
+            .attr("transform","translate("+width/2+","+height/2+")");
+        var color = d3.scaleOrdinal(['#4daf4a','#377eb8','#ff7f00','#984ea3','#e41a1c']);
+        var pie = d3.pie(); // generate the pie
+        var arc = d3.arc() // generate the arc
+            .innerRadius(0)
+            .outerRadius(radius);
+        var arcs = g.selectAll("arc")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class","arc"); // generate the arcs group
+        // draw the path
+        arcs.append("path")
+            .attr("fill",function(d,i){
+                return color(i);
+            })
+            .attr("d",arcs);
+    </script>
+</body>
+</html>

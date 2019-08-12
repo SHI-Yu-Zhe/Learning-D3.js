@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -33,51 +32,53 @@
     var g = svg.append("g")
         .attr("transform","translate(100,100)");
     // add a transform to position our graph with some margin
-    d3.csv("./XYZ.csv",function(error,data){
+    d3.csv("XYZ.csv",function(error,data){
         if (error)  throw error;
-    }); // load data and try the errors
-    xScale.domain(data.map(function(d){
-        return d.year;
-    })); // the method map returns an array which matches the parameter type of domain()
-    yScale.domain([0,d3.max(data,function(d){
-        return d.value;
-    })]);
-    g.append("g")
-        .attr("transform","translate(0,"+height+")")
-        .call(d3.axisBottom(xScale))
-        .append("text")
-        .attr("x",width-100)
-        .attr("y",height-250)
-        .attr("text-anchor","end")
-        .attr("stroke","black")
-        .text("Year"); // add x axis
-    g.append("g")
-        .call(d3.axisLeft(yScale).tickFormat(function(d){
-            return "$"+d; // add "$" symbol as tick format
-        }).ticks(10))
-        .attr("transform","rotate(-90)") // to make a horizon string rotate for pi/2
-        .attr("y",6)
-        .attr("dy","-5.1em")
-        .attr("text-anchor","end")
-        .attr("stroke","black")
-        .append("Stock Price")
-        .text("value");  // add y axis
-    g.selectAll(".bar")
-        .data(data)
-        .enter()
-        .append("rect")
-        .attr("class","bar")//append bar-classed elements
-        .on("mouseover",onMouseOver)//call the custom function when mouse move on
-        .on("mouseout",onMouseOut)//call the custom function when mouse move out
-        .attr("x",function(d){return xScale(d.year)}) // x ordinal of bar
-        .attr("y",function(d){return yScale(d.value)}) // y ordinal of bar
-        .attr("width",xScale.bandwidth())
-        .transition()
-        .ease(d3.easeLinear)
-        .duration(400)// bar with space between
-        .attr("height",function(d){
-            return height-yScale(d.value); // calculate height of bar from top
-        });
+        xScale.domain(data.map(function(d){
+            return d.year;
+        })); // the method map returns an array which matches the parameter type of domain()
+        yScale.domain([0,d3.max(data,function(d){
+            return d.value;
+        })]);
+
+        g.append("g")
+            .attr("transform","translate(0,"+height+")")
+            .call(d3.axisBottom(xScale))
+            .append("text")
+            .attr("x",width-100)
+            .attr("y",height-250)
+            .attr("text-anchor","end")
+            .attr("stroke","black")
+            .text("Year"); // add x axis
+        g.append("g")
+            .call(d3.axisLeft(yScale).tickFormat(function(d){
+                return "$"+d; // add "$" symbol as tick format
+            }).ticks(10))
+            .append("text")
+            .attr("transform","rotate(-90)") // to make a horizon string rotate for pi/2
+            .attr("y",6)
+            .attr("dy","-5.1em")
+            .attr("text-anchor","end")
+            .attr("stroke","black")
+            .text("Stroke Price");  // add y axis
+        g.selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class","bar")//append bar-classed elements
+            .on("mouseover",onMouseOver)//call the custom function when mouse move on
+            .on("mouseout",onMouseOut)//call the custom function when mouse move out
+            .attr("x",function(d){return xScale(d.year)}) // x ordinal of bar
+            .attr("y",function(d){return yScale(d.value)}) // y ordinal of bar
+            .attr("width",xScale.bandwidth())
+            .transition()
+            .ease(d3.easeLinear)
+            .duration(400)// bar with space between
+            .attr("height",function(d){
+                return height-yScale(d.value); // calculate height of bar from top
+            });
+    }); // load data, create scales and try the errors
+
     function onMouseOver(d,i){
         d3.select(this).attr("class","highlight"); //make the bar highlighted
         d3.select(this)
