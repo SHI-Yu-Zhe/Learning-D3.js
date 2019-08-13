@@ -437,6 +437,8 @@ transition.duration() 为每个元素确定动作持续时间；transition.ease(
 
 ![1565186211085](/home/shi/.config/Typora/typora-user-images/1565186211085.png)
 
+分析代码可以看到，要使用动画，首先要调用transition()方法，声明动画的开始，这一点与后面的绑定数据要使用enter()有异曲同工之妙；随后调用调用的是变化方式、变化方式持续时间duration()；可选的方法是延迟时间delay()，其延迟是相对于没有设定延迟时间的动画的。
+
 ## 绑定数据
 
 重要数据操作方法：
@@ -533,7 +535,7 @@ d3.name(url,call_back_function(){});
 </body>
 ```
 
-需要特别注意的是，第二个参数，即回调函数的逻辑是在数据加载成功后开始执行，因此要将数据驱动的所有操作放入函数体之中，也就是说，在数据未能成功加载时，不会有任何失去数据控制的操作出现。
+需要特别注意的是，第二个参数，即回调函数的逻辑是在数据加载成功后开始执行，因此要将数据驱动的所有操作放入函数体之中，也就是说，在数据未能成功加载时，不会有任何失去数据控制的操作出现。而在后面的代码中出现的data变量看似没有经过定义，但它是由匿名回调函数传递进来的形式参数，它就是一个基于对象元素的向量。
 
 ## 创建可扩展向量图(Scalable Vector Graphics)
 
@@ -724,7 +726,7 @@ SVG是一种给予文本的图片，其结构与HTML相似，它位于DOM之中�
         // create a group element to gather ellipse with text
         var g = svg.append("g")
             .attr("transform",function(d,i){
-                return "translate(0,0)";
+                return "trdanslate(0,0)";
             })
         g.append("ellipse")
             .attr("cx",250)
@@ -1004,7 +1006,7 @@ Band映射： d3.scaleBand()　建立类似叙述尺度的映射，只要输出�
     <script>
         var data = [10,15,20,25,30];
         var height = 400;
-        var svg = d3.select("body")
+        va看出，d3.scaleOrdinar svg = d3.select("body")
             .append("svg")
             .attr("width",400)
             .attr("height",height);
@@ -1041,9 +1043,312 @@ $$
 
 之前学习了柱状图和坐标轴的创建方法，我们可以使用这两个元素来创建柱形图。
 
-```
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "d3.js"></script>
+    <style>
+        .bar{
+            fill:steelblue;
+        }
+    </style>
+    <title>barChart</title>
+</head>
+<body>
+    <svg height="500" width="600"></svg>
+    <script>
+        var margin = 200; // set global variable margin for further adjustment
+        var svg = d3.select("svg"),
+            width = svg.attr("width")-margin,
+            height = svg.attr("height")-margin;
+        svg.append("text")
+            .attr("transform","translate(100,0)")
+            .attr("x",50)
+            .attr("y",50)
+            .attr("font-size","24px")
+            .text("XYZ Foods Stock Price"); // add more attributes to svg
+        var xScale = d3.scaleBand().range([0,width]).padding(0.4);
+         // set padding to obtain some space between bars
+        var yScale = d3.scaleLinear().range([height,0]);
+        var g = svg.append("g")
+            .attr("transform","translate(100,100)");
+         // add a transform to position our graph with some margin
+        d3.csv("XYZ.csv",function(error,data){
+            if (error)  throw error;
+            xScale.domain(data.map(function(d){
+                return d.year;
+            })); // the method map returns an array which matches the parameter type of domain()
+            yScale.domain([0,d3.max(data,function(d){
+                return d.value;
+            })]);
+            g.append("g")
+                .attr("transform","translate(0,"+height+")")
+                .call(d3.axisBottom(xScale))
+                .append("text")
+                .attr("x",width-100)
+                .attr("y",height-250)
+                .attr("text-anchor","end")
+                .attr("stroke","black")
+                .text("Year"); // add x axis
+            g.append("g")
+                .call(d3.axisLeft(yScale).tickFormat(function(d){
+                    return "$"+d; // add "$" symbol as tick format
+                }).ticks(10))
+                .append("text")
+                .attr("transform","rotate(-90)") // to make a horizon string rotate for pi/2
+                .attr("y",6)
+                .attr("dy","-5.1em")
+                .attr("text-anchor","end")
+                .attr("stroke","black")
+                .text("Stock Price");  // add y axis
+            g.selectAll(".bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class","bar") //append bar-classed elements
+                .attr("x",function(d){return xScale(d.year)}) // x ordinal of bar
+                .attr("y",function(d){return yScale(d.value)}) // y ordinal of bar
+                .attr("width",xScale.bandwidth()) // bar with space between
+                .attr("height",function(d){
+                    return height-yScale(d.value); // calculate height of bar from top
+                });
+        }); // load data and try the errors
 
+    </script>
+</body>
+</html>
 ```
 
 ## 动态柱形图
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "d3.js"></script>
+    <style>
+        .bar{
+            fill:steelblue;
+        }
+        .highlight{
+            fill:orange;
+        }
+    </style>
+    <title>AnimationBarChart</title>
+</head>
+<body>
+<svg height="500" width="600"></svg>
+<script>
+    var margin = 200; // set global variable margin for further adjustment
+    var svg = d3.select("svg"),
+        width = svg.attr("width")-margin,
+        height = svg.attr("height")-margin;
+    svg.append("text")
+        .attr("transform","translate(100,0)")
+        .attr("x",50)
+        .attr("y",50)
+        .attr("font-size","24px")
+        .text("XYZ Foods Stock Price"); // add more attributes to svg
+    var xScale = d3.scaleBand().range([0,width]).padding(0.4);
+    // set padding to obtain some space between bars
+    var yScale = d3.scaleLinear().range([height,0]);
+    var g = svg.append("g")
+        .attr("transform","translate(100,100)");
+    // add a transform to position our graph with some margin
+    d3.csv("XYZ.csv",function(error,data){
+        if (error)  throw error;
+        xScale.domain(data.map(function(d){
+            return d.year;
+        })); // the method map returns an array which matches the parameter type of domain()
+        yScale.domain([0,d3.max(data,function(d){
+            return d.value;
+        })]);
+
+        g.append("g")
+            .attr("transform","translate(0,"+height+")")
+            .call(d3.axisBottom(xScale))
+            .append("text")
+            .attr("x",width-100)
+            .attr("y",height-250)
+            .attr("text-anchor","end")
+            .attr("stroke","black")
+            .text("Year"); // add x axis
+        g.append("g")
+            .call(d3.axisLeft(yScale).tickFormat(function(d){
+                return "$"+d; // add "$" symbol as tick format
+            }).ticks(10))
+            .append("text")
+            .attr("transform","rotate(-90)") // to make a horizon string rotate for pi/2
+            .attr("y",6)
+            .attr("dy","-5.1em")
+            .attr("text-anchor","end")
+            .attr("stroke","black")
+            .text("Stroke Price");  // add y axis
+        g.selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class","bar")//append bar-classed elements
+            .on("mouseover",onMouseOver)//call the custom function when mouse move on
+            .on("mouseout",onMouseOut)//call the custom function when mouse move out
+            .attr("x",function(d){return xScale(d.year)}) // x ordinal of bar
+            .attr("y",function(d){return yScale(d.value)}) // y ordinal of bar
+            .attr("width",xScale.bandwidth())
+            .transition()
+            .ease(d3.easeLinear)
+            .duration(400)// bar with space between
+            .attr("height",function(d){
+                return height-yScale(d.value); // calculate height of bar from top
+            });
+    }); // load data, create scales and try the errors
+
+    function onMouseOver(d,i){
+        d3.select(this).attr("class","highlight"); //make the bar highlighted
+        d3.select(this)
+            .transition()
+            .duration(400)
+            .attr("width",xScale.bandwidth()+5) //make the bar wider
+            .attr("y",function(d){
+                return yScale(d.value)-10;
+            })
+            .attr("height",function(d){
+                return yScale(d.value)+10; //make the bar higher
+            });
+        g.append("text")
+            .attr("class","val")
+            .attr("x",function(d){
+                return xScale(d.year);
+            })
+            .attr("y",function(d){
+                return yScale(d.value)-15;
+            })
+            .text(function(d){
+                return ['$'+d.value];//add a text tip on the mouse with value
+            });
+    }
+    function onMouseOut(d,i){
+        d3.select(this).attr("class","bar");//make the bar back to ordinary
+        d3.select(this)
+            .transition()
+            .duration(400)
+            .attr("width",xScale.bandwidth())
+            .attr("y",function(d){
+                return yScale(d.value);
+            })
+            .attr("height",function(d){
+                return height-yScale(d.value);
+            });
+        d3.selectAll(".val")
+            .remove(); // remove class val as mouse move out
+    }
+</script>
+</body>
+</html>
+```
+
+
+
+## 创建饼状图
+
+SVG Path用于绘制在SVG中的路径。
+
+例子：绘制一个闭合环路区域。
+
+```html
+<body>
+    <svg height="210" width="400">
+        <path d="M150 0 L75 200 L225 200 Z"/>
+    </svg>
+</body>
+```
+
+![1565484134050](/home/shi/.config/Typora/typora-user-images/1565484134050.png)
+
+这条路径定义了顶角坐标和两个底角坐标，形成一个三角形闭合回路。默认填充黑色。
+
+d3.scaleOrdinal()是坐标映射方法，将一个空定义域映射到特定的陪域。下面的例子就是从一个向量中映射。
+
+```html
+<body>
+    <script>
+        var color = d3.scaleOrdinal(['#4daf4a','#377素eb8','#ff7f00','#984ea3','#e41a1c']);
+        console.log(color(0));
+        console.log(color(1));
+        console.log(c<body>
+    <svg width="300" height="200"></svg>
+    <script>
+        var data = [2,4,8,10];
+        var svg = d3.select("svg"),
+            width = svg.attr("width"),
+            height = svg.attr("height"),
+            radius = Math.min(width,height)/2; // make full of the space of svg
+        var g = svg.append("g")
+            .attr("transform","translate("+width/2+","+height/2+")");
+        var color = d3.scaleOrdinal(['#4daf4a','#377eb8','#ff7f00','#984ea3','#e41a1c']);
+        var pie = d3.pie(); // generate the pie
+        var arc = d3.arc() // generate the arc
+            .innerRadius(0)
+            .outerRadius(radius);
+        var arcs = g.selectAll("arc")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr(scaleOrdinal()"class","arc"); // generate the arcs group
+        // draw the path
+        arcs.append("path")
+            .attr("fill",function(d,i){
+                return color(i);
+            })
+            .attr("d",arcs);
+    </script>
+</body>olor(2));
+        console.log(color(3));
+        console.log(color(4));
+        console.log(color(5));
+    </script>
+</body>
+```
+
+![1565484844941](/home/shi/.config/Typora/typora-user-images/1565484844941.png)
+
+原始的color向量只有五个元素，而我们在代码最后一行中要求访问第六个元素。通过控制台可以看到，第六个元素值即为第一个元素值，这意味着第六个元素是对第一个元素的引用。由此可以看出，d3.scaleOrdinal()为我们创建了一个类似循环队列的数据结构。其元素满足：
+$$
+d(i)=d(i+k*d.length)
+$$
+使用d3.pie(),d3.arc()绘制饼图：
+
+```html
+<body>
+    <svg width="300" height="200"></svg>
+    <script>
+        var data = [2,4,8,10];
+        var svg = d3.select("svg"),
+            width = svg.attr("width"),
+            height = svg.attr("height"),
+            radius = Math.min(width,height)/2; // make full of the space of svg
+        var g = svg.append("g")
+          .attr("transform","translate("+width/2+","+height/2+")");
+        var color =
+  d3.scaleOrdinal(['#4daf4a','#377eb8','#ff7f00','#984ea3','#e41a1c']);
+        var pie = d3.pie(); // generate the pie
+        var arc = d3.arc() // generate the arc
+            .innerRadius(0)
+            .outerRadius(radius);
+        var arcs = g.selectAll("arc")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class","arc"); // generate the arcs group
+        // draw the path
+        arcs.append("path")
+            .attr("fill",function(d,i){
+                return color(i);
+            })
+            .attr("d",arcs);
+    </script>
+</body>
+```
 
