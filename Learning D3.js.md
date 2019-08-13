@@ -1,4 +1,4 @@
-
+[TOC]
 
 # Data-Driven Documents
 
